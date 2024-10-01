@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+        
+        body {
+            font-family: 'Ubuntu', sans-serif;
+            background: linear-gradient(to right, #ece9e6, #ffffff);
+        }
+
+        .category-card {
+            transition: all 0.3s ease-in-out;
+            background: linear-gradient(to right, #fff, #f7f7f7);
+            border: 1px solid #e0e0e0;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-card h2 {
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .category-card p {
+            color: #4a5568;
+        }
+
+        .shop-now-btn {
+            background: lightslategray;
+            color: #fff;
+            box-shadow: 0 4px 14px 0 rgba(0, 118, 255, 0.39);
+        }
+
+        .shop-now-btn:hover {
+            background: black;
+        }
+
+        .header-title {
+            color: #2d3748;
+            font-weight: 700;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 2rem auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Include header_shop and footer partials -->
+    <% include('./partials/header_shop') %>
+
+    <div class="container">
+        <h1 class="text-3xl header-title mb-8 text-center">Categories</h1>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <% categories.forEach(function(category) { %>
+                <div class="category-card p-6 rounded-lg text-center">
+                    <h2 class="text-2xl mb-2"><%= category %></h2>
+                    <p class="text-lg mb-4">Explore our collection</p>
+                    <div class="mt-6">
+                        <a href="/shop?category=<%= category %>" class="shop-now-btn py-2 px-6 rounded-full text-lg transition duration-300">Shop Now</a>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+    
+    <% include('./partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<%- include('./partials/header_shop') %>
+<div class="container mx-auto py-10">
+    <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Product Image Section -->
+        <div class="lg:w-1/2 flex justify-center items-center">
+            <div class="h-[460px] bg-gray-100 lg:w-[500px] lg:h-[500px] flex justify-center items-center overflow-hidden rounded-lg shadow-lg">
+                <img src="data:image/jpeg;base64,<%= product.image.toString('base64') %>" alt="<%= product.name %>" class="object-cover">
+            </div>
+        </div>
+
+        <!-- Product Details Section -->
+        <div class="lg:w-1/2 flex flex-col justify-center">
+            <div class="bg-white p-8 rounded-lg border-2 shadow-lg">
+                <h2 class="text-3xl font-semibold mb-4"><%= product.name %></h2>
+                <p class="text-2xl text-gray-800 mb-4">₹ <%= product.price %></p>
+                <p class="text-lg text-gray-700 mb-6"><%= product.description %></p>
+                
+                <!-- Add to Cart Button -->
+                <button class="px-6 py-3 bg-blue-500 text-white rounded-full mr-4 hover:bg-blue-600 add-to-cart" data-product-id="<%= product._id %>">Add to Cart</button>
+                
+                <!-- Flash Message Placeholder -->
+                <div id="flash-message" class="hidden bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mt-4 rounded">
+                    <!-- Flash message text will be inserted here -->
+                </div>
+                
+                <!-- Shipping and Return Details -->
+                <div class="mt-8 space-y-4 text-gray-600">
+                    <div class="flex items-center">
+                        <i class="ri-truck-line text-xl mr-2"></i>
+                        Free shipping on orders over ₹130
+                    </div>
+                    <div class="flex items-center">
+                        <i class="ri-refresh-line text-xl mr-2"></i>
+                        Free return for 30 days
+                    </div>
+                    <div class="flex items-center">
+                        <i class="ri-bike-line text-xl mr-2"></i>
+                        Bicycles are partially assembled with transport insurance
+                    </div>
+                    <div class="flex items-center">
+                        <i class="ri-timer-line text-xl mr-2"></i>
+                        Fast delivery
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('./partials/footer') %>
+
+<style>
+    .add-to-cart {
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .add-to-cart:hover {
+        background-color: #3182ce;
+    }
+
+    #flash-message {
+        width: 100%;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    @media (max-width: 1024px) {
+        .lg:flex-row {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add event listener to handle Add to Cart button clicks
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', async function(event) {
+                event.preventDefault(); // Prevent default form submission behavior
+
+                const productId = this.dataset.productId;
+
+                try {
+                    const response = await fetch(`/add-to-cart/${productId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                            // Add any other headers as needed
+                        },
+                    });
+
+                    if (response.ok) {
+                        // Show flash message on success
+                        const flashMessageElement = document.getElementById('flash-message');
+                        flashMessageElement.textContent = 'Product added to cart successfully';
+                        flashMessageElement.classList.remove('hidden');
+                        
+                        // Optionally, update UI (e.g., update cart counter)
+                        console.log('Product added to cart');
+                    } else {
+                        console.error('Failed to add product to cart');
+                    }
+                } catch (error) {
+                    console.error('Error adding product to cart:', error);
+                }
+            });
+        });
+    });
+</script>

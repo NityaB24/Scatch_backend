@@ -1,0 +1,47 @@
+<%- include('./partials/header_owner') %>
+
+<div class="min-h-screen flex flex-col">
+    <div class="container px-20 py-20 flex flex-grow">
+        <div class="w-[25%] flex h-screen flex-col items-start">
+            <div class="flex flex-col">
+                <a class="block w-fit mb-2" href="/owners/all-products">All Products</a>
+                <a class="block w-fit mb-2" href="/owners/create-product">Create New Product</a>
+            </div>
+        </div>
+        <main class="w-3/4 bg-white p-8 shadow ml-4">
+            <h2 class="text-xl font-bold mb-4">Edit Product</h2>
+            <form autocomplete="off" action="/products/edit-product/<%= product._id %>" method="post" enctype="multipart/form-data">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-2">Product Details</h3>
+                    <div class="mb-4">
+                        <label class="block mb-2 font-medium">Product Image</label>
+                        <input name="image" type="file" class="py-2 px-4 rounded">
+                    </div>
+                    <!-- <div class="mb-4">
+                        <label class="block mb-2 font-medium">Category Image</label>
+                        <input name="categoryimage" type="file" class="py-2 px-4 rounded" value="Select File">
+                    </div> -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <input name="name" type="text" placeholder="Product Name" value="<%= product.name %>" class="border p-2 rounded w-full">
+                        <input name="price" type="text" placeholder="Product Price" value="<%= product.price %>" class="border p-2 rounded w-full">
+                        <input name="discount" type="text" placeholder="Discount Price" value="<%= product.discount %>" class="border p-2 rounded w-full">
+                        <input name="category" type="text" placeholder="Category Name" value="<%= product.category %>" class="border p-2 rounded w-full">
+                        <input name="description" type="text" placeholder="Description" value="<%= product.description %>" class="border p-2 rounded w-full">
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Panel Details</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <input name="bgcolor" type="text" placeholder="Background Color" value="<%= product.bgcolor %>" class="border p-2 rounded w-full">
+                        <input name="panelcolor" type="text" placeholder="Panel Color" value="<%= product.panelcolor %>" class="border p-2 rounded w-full">
+                        <input name="textcolor" type="text" placeholder="Text Color" value="<%= product.textcolor %>" class="border p-2 rounded w-full">
+                    </div>
+                </div>
+                <input class="px-5 py-2 rounded mt-3 bg-blue-500 text-white" type="submit" value="Update Product">
+            </form>
+        </main>
+    </div>
+</div>
+
+<%- include('./partials/footer') %>

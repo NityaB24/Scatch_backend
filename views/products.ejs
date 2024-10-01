@@ -1,0 +1,44 @@
+<%- include('./partials/header_owner') %>
+
+<div class="w-full h-screen flex items-start px-20 py-20">
+    <div class="w-[25%] flex h-screen flex-col items-start">
+        <div class="flex flex-col mb-10">
+            <a class="block w-fit mb-2" href="/owners/all-products">All Products</a>
+            <a class="block w-fit mb-2" href="/owners/create-product">Create New Product</a>
+            <a class="block w-fit mb-2" href="/owners/all-orders">My Orders</a>
+        </div>
+        <div class="flex flex-col w-full">
+            <form action="/owners/search" method="get" class="w-full">
+                <input type="text" name="query" placeholder="Search products..." class="border p-2 rounded w-[75%] mb-4">
+                <button type="submit" class="px-5 py-2 rounded bg-blue-500 text-white">Search</button>
+            </form>
+        </div>
+    </div>
+    <div class="w-[75%] flex flex-wrap gap-5 h-screen overflow-auto">
+        <% products.forEach(function(product){ %>
+            <div class="w-60">
+                <div class="w-full h-52 flex items-center justify-center bg-[<%= product.bgcolor %>]">
+                    <img class="h-[12rem]" src="data:image/jpeg;base64,<%= product.image.toString('base64') %>" alt="">
+                </div>
+                <div class="flex justify-between bg-[<%= product.panelcolor %>] items-center px-4 py-4 text-[<%= product.textcolor %>]">
+                    <div>
+                        <h3><%= product.name %></h3>
+                        <h4>₹ <%= product.price %></h4>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a class="w-7 h-7 flex items-center justify-center rounded-full bg-white" href="/owners/edit-product/<%= product._id %>">
+                            <i class="ri-edit-line"></i>
+                        </a>
+                        <form action="/owners/delete-product/<%= product._id %>" method="post" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                            <button type="submit" class="w-7 h-7 flex items-center justify-center rounded-full bg-white">
+                                <i class="ri-delete-bin-line"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</div>
+
+<%- include('./partials/footer') %>

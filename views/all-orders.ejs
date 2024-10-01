@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Orders</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="font-sans bg-gray-100">
+    <%- include('./partials/header_owner') %>
+    <div class="w-full max-w-7xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
+        <h1 class="text-4xl font-bold mb-10 text-center text-indigo-600">All Orders</h1>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white">
+                <thead>
+                    <tr>
+                        <th class="py-3 px-6 bg-indigo-600 text-white text-left text-sm font-semibold">Order ID</th>
+                        <th class="py-3 px-6 bg-indigo-600 text-white text-left text-sm font-semibold">Customer</th>
+                        <th class="py-3 px-6 bg-indigo-600 text-white text-left text-sm font-semibold">Email</th>
+                        <th class="py-3 px-6 bg-indigo-600 text-white text-left text-sm font-semibold">Total Amount</th>
+                        <th class="py-3 px-6 bg-indigo-600 text-white text-left text-sm font-semibold">Order Date</th>
+                        <th class="py-3 px-6 bg-indigo-600 text-white text-left text-sm font-semibold">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% orders.forEach(function(order) { %>
+                    <tr class="border-b border-gray-200">
+                        <td class="py-4 px-6 text-sm"><%= order._id %></td>
+                        <td class="py-4 px-6 text-sm"><%= order.user.fullname %></td>
+                        <td class="py-4 px-6 text-sm"><%= order.user.email %></td>
+                        <td class="py-4 px-6 text-sm">₹ <%= order.totalAmount.toFixed(2) %></td>
+                        <td class="py-4 px-6 text-sm"><%= new Date(order.createdAt).toLocaleString() %></td>
+                        <td class="py-4 px-6 text-sm">
+                            <button onclick="toggleOrderDetails('<%= order._id %>')" class="text-indigo-500 hover:underline">View</button>
+                        </td>
+                    </tr>
+                    <tr id="details-<%= order._id %>" class="hidden">
+                        <td colspan="6" class="py-4 px-6">
+                            <div class="p-6 bg-gray-100 rounded-lg">
+                                <h3 class="text-xl font-semibold mb-4">Order Details</h3>
+                                <ul class="list-disc list-inside space-y-2">
+                                    <% order.products.forEach(function(product) { %>
+                                    <li><%= product.name %> x <%= product.quantity %> - ₹ <%= product.total.toFixed(2) %></li>
+                                    <% }) %>
+                                </ul>
+                                <h3 class="text-xl font-semibold mt-4 mb-2">Billing Details</h3>
+                                <p><%= order.billingDetails.firstName %> <%= order.billingDetails.lastName %></p>
+                                <p><%= order.billingDetails.address %>, <%= order.billingDetails.city %>, <%= order.billingDetails.state %>, <%= order.billingDetails.zip %></p>
+                                <p>Phone: <%= order.billingDetails.phone %></p>
+                                <h3 class="text-xl font-semibold mt-4 mb-2">Shipping Details</h3>
+                                <p><%= order.shippingDetails.shippingFirstName %> <%= order.shippingDetails.shippingLastName %></p>
+                                <p><%= order.shippingDetails.shippingAddress %>, <%= order.shippingDetails.shippingCity %>, <%= order.shippingDetails.shippingState %>, <%= order.shippingDetails.shippingZip %></p>
+                            </div>
+                        </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <%- include('./partials/footer') %>
+    <script>
+        function toggleOrderDetails(orderId) {
+            const detailsRow = document.getElementById(`details-${orderId}`);
+            detailsRow.classList.toggle('hidden');
+        }
+    </script>
+</body>
+
+</html>

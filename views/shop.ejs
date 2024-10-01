@@ -1,0 +1,146 @@
+<%- include('./partials/header_shop') %>
+<div class="w-full h-screen flex items-start px-20 py-20">
+    <div class="w-[25%] flex h-screen flex-col items-start">
+        <div class="flex items-center gap-2">
+            <h3>Sort by</h3>
+            <form action="/shop" method="get">
+                <select class="border-[1px] px-2 py-1" name="sortby" id="">
+                    <option value="popular" <%= sortby === 'popular' ? 'selected' : '' %>>Popular</option>
+                    <option value="newest" <%= sortby === 'newest' ? 'selected' : '' %>>Newest</option>
+                    <option value="low-to-high" <%= sortby === 'low-to-high' ? 'selected' : '' %>>Low to High</option>
+                    <option value="high-to-low" <%= sortby === 'high-to-low' ? 'selected' : '' %>>High to Low</option>
+                </select>
+                <button type="submit" class="hidden"></button>
+            </form>
+            <script>
+                document.querySelector('select[name="sortby"]').addEventListener('change', function() {
+                    this.form.submit();
+                });
+            </script>
+        </div>
+        <div class="flex flex-col mt-20">
+            <input type="text" id="search-input" placeholder="Search products..." class="border-zinc-700 border-[1px] px-2 py-1 mb-3 rounded-md">
+            <a class="block w-fit mb-2" href="/shop">New Collection</a>
+            <a class="block w-fit mb-2" href="/shop">All Products</a>
+            <a class="block w-fit mb-2" href="/discount">Discounted Products</a>
+            <form action="/shop" method="get" class="mt-4">
+                <select class="border-[1px] px-2 py-1" name="category" onchange="this.form.submit()">
+                    <option value="" <%= !selectedCategory ? 'selected' : '' %>>All Categories</option>
+                    <% categories.forEach(function(category) { %>
+                        <option value="<%= category %>" <%= selectedCategory === category ? 'selected' : '' %>><%= category %></option>
+                    <% }) %>
+                </select>
+            </form>
+        </div>
+        <div class="mt-32">
+            <a class="block w-fit mb-2" href="">Filter by :</a>
+            <a class="block w-fit mb-2" href="">Availability</a>
+            <a class="block w-fit mb-2" href="">Discount</a>
+        </div>
+    </div>
+    <div class="w-[75%] flex flex-col gap-5 h-screen">
+        <div class="flex items-start  flex-wrap gap-5" id="product-container">
+            <% products.forEach(function(product){ %>
+                <div class="w-1/4 border border-gray-200 rounded-lg overflow-hidden product-item" data-name="<%= product.name.toLowerCase() %>">
+                    <a href="/product/<%= product._id %>" class="block">
+                        <div class="h-52 bg-[<%= product.bgcolor %>] flex items-center justify-center">
+                            <img class="h-[10rem] object-cover " src="data:image/jpeg;base64,<%= product.image.toString('base64') %>" alt="<%= product.name %>">
+                        </div>
+                        <div class="flex justify-between items-center bg-[<%= product.panelcolor %>] px-4 py-3">
+                            <h3 class="text-[<%= product.textcolor %>] text-lg font-semibold mb-1"><%= product.name %></h3>
+                            <p class="text-[<%= product.textcolor %>] text-sm">₹ <%= product.price %></p>
+                        </div>
+                    </a>
+                    <button class="w-full py-2 bg-[<%= product.panelcolor %>] text-[<%= product.textcolor %>] hover:bg-[<%= product.bgcolor %>] hover:text-[<%= product.textcolor %>] transition-colors duration-300 ease-in-out rounded-b-lg add-to-cart" data-product-id="<%= product._id %>">
+                        <i class="ri-add-line"></i> Add to Cart
+                    </button>
+                </div>
+            <% }) %>
+            <script>
+                document.querySelectorAll('.add-to-cart').forEach(button => {
+                    button.addEventListener('click', async function() {
+                        const productId = this.dataset.productId;
+                        try {
+                            const response = await fetch(`/add-to-cart/${productId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                    // Add any other headers as needed
+                                },
+                                // body: JSON.stringify({ productId }), // Include if you need to send JSON data
+                            });
+            
+                            if (response.ok) {
+                                // Handle success (e.g., show flash message)
+                                const flashMessage = document.createElement('div');
+                                flashMessage.classList.add('flash-message', 'slide-in');
+                                flashMessage.textContent = 'Product added to cart';
+                                document.body.appendChild(flashMessage);
+                                
+                                // Trigger reflow to enable CSS transition
+                                flashMessage.offsetHeight; // This line is crucial for triggering the CSS transition
+                                
+                                // Automatically remove flash message after 5 seconds
+                                setTimeout(() => {
+                                    flashMessage.classList.add('slide-out');
+                                    setTimeout(() => {
+                                        flashMessage.remove();
+                                    }, 500); // Duration should match CSS transition duration
+                                }, 3000);
+                            } else {
+                                // Handle error
+                                console.error('Failed to add product to cart');
+                            }
+                        } catch (error) {
+                            console.error('Error adding product to cart:', error);
+                        }
+                    });
+                });
+
+                // Real-time search functionality
+                const searchInput = document.getElementById('search-input');
+                const productItems = document.querySelectorAll('.product-item');
+
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.trim().toLowerCase();
+
+                    productItems.forEach(item => {
+                        const productName = item.dataset.name;
+                        const productElement = item.closest('.product-item');
+
+                        if (productName.includes(searchTerm)) {
+                            productElement.style.display = 'block';
+                        } else {
+                            productElement.style.display = 'none';
+                        }
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</div>
+
+<style>
+    .flash-message {
+        position: fixed;
+        top: 60px;
+        right: -300px; /* Start off-screen */
+        background-color: #78c87b;
+        color: black;
+        padding: 10px 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 9999;
+        transition: right 0.5s ease-in-out; /* Slide transition */
+    }
+
+    .slide-in {
+        right: 20px; /* Slide in to the screen */
+    }
+
+    .slide-out {
+        right: -300px; /* Slide out off the screen */
+    }
+</style>
+
+<%- include('./partials/footer') %>

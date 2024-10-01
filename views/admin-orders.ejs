@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Orders</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="font-sans bg-gray-100">
+    <%- include('./partials/header_shop') %>
+    <div class="w-full max-w-7xl mx-auto mt-10 p-4 bg-white rounded-lg shadow-lg">
+        <h1 class="text-3xl font-bold mb-8 text-center">All Orders</h1>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white">
+                <thead>
+                    <tr>
+                        <th class="py-2 px-4 border-b border-gray-200">Order ID</th>
+                        <th class="py-2 px-4 border-b border-gray-200">Customer</th>
+                        <th class="py-2 px-4 border-b border-gray-200">Email</th>
+                        <th class="py-2 px-4 border-b border-gray-200">Total Amount</th>
+                        <th class="py-2 px-4 border-b border-gray-200">Order Date</th>
+                        <th class="py-2 px-4 border-b border-gray-200">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% orders.forEach(function(order) { %>
+                    <tr>
+                        <td class="py-2 px-4 border-b border-gray-200"><%= order._id %></td>
+                        <td class="py-2 px-4 border-b border-gray-200"><%= order.user.fullname %></td>
+                        <td class="py-2 px-4 border-b border-gray-200"><%= order.user.email %></td>
+                        <td class="py-2 px-4 border-b border-gray-200">₹ <%= order.totalAmount.toFixed(2) %></td>
+                        <td class="py-2 px-4 border-b border-gray-200"><%= new Date(order.createdAt).toLocaleString() %></td>
+                        <td class="py-2 px-4 border-b border-gray-200">
+                            <button onclick="toggleOrderDetails('<%= order._id %>')" class="text-blue-500 hover:underline">View</button>
+                        </td>
+                    </tr>
+                    <tr id="details-<%= order._id %>" class="hidden">
+                        <td colspan="6" class="py-2 px-4 border-b border-gray-200">
+                            <div class="p-4 bg-gray-100 rounded-lg">
+                                <h3 class="text-lg font-semibold mb-4">Order Details</h3>
+                                <ul class="list-disc list-inside">
+                                    <% order.products.forEach(function(product) { %>
+                                    <li><%= product.name %> x <%= product.quantity %> - ₹ <%= product.total.toFixed(2) %></li>
+                                    <% }) %>
+                                </ul>
+                                <h3 class="text-lg font-semibold mt-4 mb-2">Billing Details</h3>
+                                <p><%= order.billingDetails.firstName %> <%= order.billingDetails.lastName %>, <%= order.billingDetails.address %>, <%= order.billingDetails.city %>, <%= order.billingDetails.state %>, <%= order.billingDetails.zip %>, <%= order.billingDetails.phone %></p>
+                                <h3 class="text-lg font-semibold mt-4 mb-2">Shipping Details</h3>
+                                <p><%= order.shippingDetails.shippingFirstName %> <%= order.shippingDetails.shippingLastName %>, <%= order.shippingDetails.shippingAddress %>, <%= order.shippingDetails.shippingCity %>, <%= order.shippingDetails.shippingState %>, <%= order.shippingDetails.shippingZip %></p>
+                            </div>
+                        </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <%- include('./partials/footer') %>
+    <script>
+        function toggleOrderDetails(orderId) {
+            const detailsRow = document.getElementById(`details-${orderId}`);
+            detailsRow.classList.toggle('hidden');
+        }
+    </script>
+</body>
+
+</html>
